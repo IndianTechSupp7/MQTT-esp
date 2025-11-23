@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>ESP8266 LED Control</h1>
+
+    <button onclick="send('ON')">ON</button>
+    <button onclick="send('OFF')">OFF</button>
+    <br />
+    <input style="width: 300px;" type="range" id="ledRange" min="0" max="1" step="0.01" value="0.5"/>
+
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script>
+      const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
+
+      client.on("connect", () => {
+        console.log("Connected to MQTT");
+      });
+
+      function send(cmd) {
+        client.publish("premo_keszthely/esp/digital_led/", cmd);
+      }
+      const slider = document.getElementById("ledRange");
+
+      slider.addEventListener("input", () => {
+        const value = slider.value; // value between 0 and 1 (string)
+        client.publish("premo_keszthely/esp/analog_led/", value);
+        console.log("Sent:", value);
+      });
+    </script>
+  </body>
+</html>
